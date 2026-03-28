@@ -1,6 +1,7 @@
 import express from 'express'
 import axios from 'axios'
 import dotenv from 'dotenv'
+import rateLimit from 'express-rate-limit'
 
 
 
@@ -9,7 +10,7 @@ dotenv.config()
 
 const app = express()
 
-const wake = process.env.WAKE_URL
+//const wake = process.env.WAKE_URL
 
 const port = process.env.PORT
 
@@ -22,15 +23,24 @@ const axiosInstance = axios.create({
   timeout: 120000,
 })
 
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 10
+})
+
 const services = [
   "https://e-commerce-u97s.onrender.com/health", 
   "https://wallet-mobile.onrender.com/health"
 ]
 
-app.get(`/${wake}`, async(req, res) => {
+
+
+
+app.get('/wake', limiter, async(req, res) => {
   
 
   try {
+    
     const result = await Promise.allSettled(
       services.map((url) => axiosInstance.get(url, { timeout: 12000 })
       
