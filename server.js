@@ -32,7 +32,7 @@ app.get(`/${wake}`, async(req, res) => {
 
   try {
     const result = await Promise.allSettled(
-      services.map((url) => axiosInstance.get(url)
+      services.map((url) => axiosInstance.get(url, { timeout: 12000 })
       
     
       )
