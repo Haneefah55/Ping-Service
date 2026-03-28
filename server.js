@@ -36,7 +36,7 @@ const services = [
 
 
 
-app.get('/wake', limiter, async(req, res) => {
+app.get('/wake', async(req, res) => {
   
 
   try {
