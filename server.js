@@ -14,14 +14,7 @@ const app = express()
 
 const port = process.env.PORT
 
-const axiosInstance = axios.create({
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  },
-  withCredentials: true,
-  timeout: 120000,
-})
+
 
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000,
@@ -40,20 +33,20 @@ app.get('/wake', async(req, res) => {
   
 
   try {
-    
     const result = await Promise.allSettled(
-      services.map((url) => axiosInstance.get(url, { timeout: 12000 })
-      
-    
+      services.map(async (url) => {
+        const start = Date.now()
+        await axios.get(url, { timeout: 80000 })
+        return { url, time: Date.now() - start }
+      }
       )
     )
-
-    
-
     const response = result.map((result, index) => ({
       service: services[index],
-      status: result.status === "fulfilled" ? "connected" : "not-connected"
+      status: result.status === "fulfilled" ? "connected" : "not-connected",
+      responseTime: result.status === "fulfilled" ? `${result.value.time}ms` : null
     }))
+    console.log("res", response)
 
     console.log("service running")
 
@@ -77,7 +70,7 @@ app.get('/wake', async(req, res) => {
 
 
 app.listen(port, () => {
-  console.log("ping service running")
+  console.log("ping service running ", `on port ${port}`)
 })
 
 
