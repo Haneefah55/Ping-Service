@@ -2,6 +2,7 @@ import express from 'express'
 import axios from 'axios'
 import dotenv from 'dotenv'
 import rateLimit from 'express-rate-limit'
+import cors from 'cors'
 
 
 
@@ -25,6 +26,11 @@ const services = [
   "https://e-commerce-u97s.onrender.com/health", 
   "https://wallet-mobile.onrender.com/health"
 ]
+
+
+app.use(cors({
+  origin: "*"
+}))
 
 
 
